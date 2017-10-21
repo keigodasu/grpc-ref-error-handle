@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package search;
+
+service SearchService{
+  rpc Search(SearchRequest) returns (SearchResponse);
+}
+
+message SearchResponse {
+}
+
+message SearchRequest {
+  oneof query {
+    StructuredQuery structured_query = 1; 
+  }
+}
+
+message StructuredQuery {
+  message Filter {
+    oneof filter_type {
+      CompositeFilter composite_filter = 1;
+      FieldFilter field_filter = 2;
+    } 
+  }
+
+  message CompositeFilter {
+    enum Operator {
+      AND = 0;
+      OR = 1;
+      NOT = 2;
+    }
+
+    Operator op = 1;
+    repeated Filter filters = 2;
+  }
+
+  message FieldFilter {
+    enum Operator {
+      LESS_THAN = 0;
+      LESS_THAN_OR_EQUAL = 1;
+      GREATER_THAN = 2;
+      GREATER_THAN_OR_EQUAL = 43;
+      EQUAL = 4;
+    }
+    FieldReference field = 1;
+    perator op = 2;
+    string keyword = 3;
+  }
+
+  message FieldReference {
+    string field_path = 1;
+  }
+  
+  Filter where = 1;
+}
+
+
